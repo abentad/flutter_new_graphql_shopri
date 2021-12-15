@@ -116,7 +116,7 @@ class ApiController extends GetxController {
     update();
   }
 
-  void addProduct(String name, String price, String? category, String description, BuildContext context) async {
+  Future<bool> addProduct(String name, String price, String? category, String description, BuildContext context) async {
     Uint8List _firstImageAsUint8List = _productImages[0]!.readAsBytesSync();
     var _firstImage = await decodeImageFromList(_firstImageAsUint8List);
     var blurHash = await blurhash.BlurHash.encode(_firstImageAsUint8List, 4, 3);
@@ -147,14 +147,18 @@ class ApiController extends GetxController {
     final QueryResult result = await _client!.mutate(options);
     if (result.hasException) print(result.exception.toString());
     if (result.data != null) {
-      Navigator.pushReplacement(context, transition.Transition(child: HomeScreen(userInfo: _loggedInUserInfo), transitionEffect: transition.TransitionEffect.FADE));
+      // Navigator.pushReplacement(context, transition.Transition(child: HomeScreen(userInfo: _loggedInUserInfo), transitionEffect: transition.TransitionEffect.FADE));
+      // Navigator.pop(context);
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(result.data!['createProduct']['name'] + " has been successfully added.", style: const TextStyle(color: Colors.black)), backgroundColor: Colors.white));
+      update();
+      return true;
     } else {
       print("data: $result.data");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Adding $name Failed", style: const TextStyle(color: Colors.black)), backgroundColor: Colors.white));
+      return false;
     }
-    update();
   }
 
   //* for verifying phoneNumber using firebase

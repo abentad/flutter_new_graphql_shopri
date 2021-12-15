@@ -40,7 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
-    pageToLoad = 1;
+
+    //
+    // pageToLoad = 1;
     fetchData(isInit: true);
     super.initState();
   }
@@ -51,15 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
         pageToLoad = 1;
       });
     }
-    // print("fetch data called");
     setState(() {
       isLoading = true;
     });
-    // print("loading...");
-    // print(isLoading);
     loadInfo = await Get.find<ApiController>().getProducts(pageToLoad);
     setState(() {});
-    // print("loadInfo: $loadInfo");
     if (loadInfo == 'done') {
       setState(() {
         pageToLoad++;

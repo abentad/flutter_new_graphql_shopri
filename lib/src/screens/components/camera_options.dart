@@ -20,12 +20,12 @@ Widget buildCameraOptions(Size size, BuildContext context) {
           SizedBox(height: size.height * 0.02),
           CustomMaterialButton(
             onPressed: () async {
-              Navigator.pop(context);
               XFile? imageFile = await Get.find<MyCameraController>().pickImageFromCamera();
               if (imageFile != null) {
                 File croppedImage = await Get.find<MyCameraController>().cropImage(File(imageFile.path));
                 Get.find<ApiController>().addToProductImages(croppedImage);
-                Navigator.pushReplacement(context, transition.Transition(child: const ProductAddScreen()));
+                Navigator.pop(context);
+                Navigator.push(context, transition.Transition(child: const ProductAddScreen()));
               }
             },
             btnLabel: "Camera",

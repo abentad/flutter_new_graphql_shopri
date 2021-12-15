@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
-import 'package:shopri/src/screens/home_screen.dart';
 import '../controllers/api_controller.dart';
 import 'components/camera_options.dart';
 import 'components/custom_textform_field.dart';
-import 'package:transition/transition.dart' as transition;
+// import 'package:transition/transition.dart' as transition;
 
 class ProductAddScreen extends StatefulWidget {
   const ProductAddScreen({Key? key}) : super(key: key);
@@ -52,7 +51,8 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                           shouldExit = true;
                           Get.find<ApiController>().clearProductImages();
                           Navigator.pop(context);
-                          Navigator.pushReplacement(context, transition.Transition(child: HomeScreen(userInfo: Get.find<ApiController>().loggedInUserInfo)));
+                          // Navigator.pushReplacement(context, transition.Transition(child: HomeScreen(userInfo: Get.find<ApiController>().loggedInUserInfo)));
+                          Navigator.pop(context);
                         },
                         child: const Text('Yes'),
                       ),
@@ -75,13 +75,16 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
           title: const Text("Add Product", style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_nameController.text.isNotEmpty &&
                     _priceController.text.isNotEmpty &&
                     _descriptionController.text.isNotEmpty &&
                     category != null &&
                     Get.find<ApiController>().productImages.isNotEmpty) {
-                  Get.find<ApiController>().addProduct(_nameController.text, _priceController.text, category, _descriptionController.text, context);
+                  bool result = await Get.find<ApiController>().addProduct(_nameController.text, _priceController.text, category, _descriptionController.text, context);
+                  if (result) {
+                    Navigator.pop(context);
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please fill all information.", style: TextStyle(color: Colors.black)), backgroundColor: Colors.white));
                 }
