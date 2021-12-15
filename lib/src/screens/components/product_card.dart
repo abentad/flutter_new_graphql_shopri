@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import '../../utils/product_image_loader.dart';
 import '../../utils/price_format.dart';
 
@@ -84,7 +85,7 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: size.height * 0.01),
-                  Text(name, style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black)),
+                  Text(name.toString().capitalize.toString(), style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black)),
                   SizedBox(height: size.height * 0.01),
                   Text(
                     '${formatPrice(price)} birr',
