@@ -38,6 +38,33 @@ class QueryController extends GetxController {
     """;
   }
 
+  String getConversations(int userId) {
+    return """
+        {
+          conversations(userId: $userId){
+            id
+            senderId
+            receiverId
+            lastMessage
+            lastMessageTimeSent
+            lastMessageSenderId
+            lastMessageSender{
+              username
+              profile_image
+            }
+            sender{
+              username
+              profile_image
+            }
+            receiver{
+              username
+              profile_image
+            }
+          }
+        }
+    """;
+  }
+
   final String loginUserByToken = """
       mutation{
         loginUserByToken{

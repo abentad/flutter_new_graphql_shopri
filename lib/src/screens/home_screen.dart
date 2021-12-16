@@ -80,11 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     List<Widget> homeScreenComponents = [
       buildHome(fetchData, scrollController, size, context, widget.userInfo, loadInfo, isLoading),
       buildSearch(),
       buildNotificaition(),
-      buildMessages(),
+      const Messages(),
     ];
 
     return WillPopScope(

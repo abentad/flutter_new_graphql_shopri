@@ -1,19 +1,14 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:graphql/client.dart';
 import 'package:shopri/src/constants/api_path.dart';
 import 'package:shopri/src/controllers/api_controller.dart';
-import 'package:shopri/src/model/conversation.dart';
-import 'package:shopri/src/model/message.dart';
+import 'package:shopri/src/controllers/query_controller.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class ChatController extends GetxController {
   late Socket _socket;
-  final _storage = const FlutterSecureStorage();
-  final String _tokenKey = "token";
-  List<Conversation> _conversations = [];
-  List<Conversation> get conversations => _conversations;
-  List<Message> _messages = [];
-  List<Message> get messages => _messages;
+  Map<String, dynamic>? _conversations;
+  Map<String, dynamic>? get conversations => _conversations;
   Map<String, dynamic>? loggedInUser = Get.find<ApiController>().loggedInUserInfo;
 
   ChatController() {
@@ -36,21 +31,15 @@ class ChatController extends GetxController {
     }
   }
 
-  void clearData() {
-    _conversations = [];
-    _messages = [];
-    update();
-  }
-
   //adds new message received from socket io to the list of messages
   void onReceiveMessage(message) {
     int convId = 1;
     int senderId = 1;
     int messageId = 1;
-    String senderName = loggedInUser!['username'];
-    _messages.add(
-      Message(conversationId: convId, senderId: senderId, senderName: senderName, messageText: message, timeSent: DateTime.now(), id: messageId),
-    );
+    // String senderName = loggedInUser!['username'];
+    // _messages.add(
+    //   Message(conversationId: convId, senderId: senderId, senderName: senderName, messageText: message, timeSent: DateTime.now(), id: messageId),
+    // );
     convId = convId + 1;
     senderId = senderId + 1;
     messageId = messageId + 1;
@@ -58,6 +47,28 @@ class ChatController extends GetxController {
     update();
   }
 
+  Future<bool> getConversations(int userId) async {
+    final GraphQLClient? _client = Get.find<ApiController>().client;
+    final QueryOptions options = QueryOptions(document: gql(Get.find<QueryController>().getConversations(userId)), variables: <String, dynamic>{});
+    final QueryResult result = await _client!.query(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+      return false;
+    }
+    Map<String, dynamic>? _data = result.data;
+    // print(_data);
+    _conversations = _data;
+    update();
+    return true;
+  }
+
+  // Future<Map<String, dynamic>?> findUserByPhoneNumberAndSignIn(String phoneNumber) async {
+  //   final QueryOptions options = QueryOptions(document: gql(Get.find<QueryController>().findUserByPhoneNumber(phoneNumber: phoneNumber)), variables: <String, dynamic>{});
+  //   final QueryResult result = await _client!.query(options);
+  //   if (result.hasException) print(result.exception.toString());
+  //   Map<String, dynamic>? _data = result.data;
+  //   return _data;
+  // }
   //posts message, finds device token by using receiverId, sends notification using the device token, emits the message to the room with the convId
   // Future<bool> sendMessageToRoom({required String message, required String convId, required String senderId, required String senderName, required String receiverId}) async {
   //   // print('send message called using:\nmessage: $message\nconvId: $convId\nsenderId: $senderId\nsenderName: $senderName\nreceiverId: $receiverId');

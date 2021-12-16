@@ -23,6 +23,7 @@ class ApiController extends GetxController {
   Map<String, dynamic>? get loggedInUserInfo => _loggedInUserInfo;
   String? _token;
   GraphQLClient? _client;
+  GraphQLClient? get client => _client;
   final List<Map<String, dynamic>> _products = [];
   List<Map<String, dynamic>> get products => _products;
   int? _totalPage;

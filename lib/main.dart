@@ -27,11 +27,11 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  Get.put<ApiController>(ApiController());
   Get.put<ChatController>(ChatController());
   Get.put<NotificationController>(NotificationController());
   Get.put<MyCameraController>(MyCameraController());
   Get.put<QueryController>(QueryController());
-  Get.put<ApiController>(ApiController());
   Get.put<CategoryController>(CategoryController());
   if (!kIsWeb) {
     AwesomeNotifications().initialize(null, Get.find<NotificationController>().notificationChannels);
