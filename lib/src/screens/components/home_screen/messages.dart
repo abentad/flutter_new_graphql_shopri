@@ -45,22 +45,23 @@ class _MessagesState extends State<Messages> {
               SizedBox(height: size.height * 0.04),
               Expanded(
                 child: ListView.builder(
-                  itemCount: controller.conversations!['conversations'].length,
+                  itemCount: controller.conversations!.length,
                   itemBuilder: (context, index) {
                     return Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context,
-                              transition.Transition(child: ChatScreen(convId: controller.conversations!['conversations'][index]['id']), transitionEffect: transition.TransitionEffect.RIGHT_TO_LEFT));
+                          Navigator.push(context, transition.Transition(child: ChatScreen(conversationIndex: index), transitionEffect: transition.TransitionEffect.RIGHT_TO_LEFT));
                         },
-                        child: buildContactButton(
-                          size,
-                          imgUrl: controller.conversations!['conversations'][index]['receiver']['profile_image'],
-                          lastText: controller.conversations!['conversations'][index]['lastMessage'],
-                          lastTextTimeSent: controller.conversations!['conversations'][index]['lastMessageTimeSent'],
-                          name: controller.conversations!['conversations'][index]['receiver']['username'],
-                        ),
+                        child: buildContactButton(size,
+                            imgUrl: Get.find<ApiController>().loggedInUserInfo!['id'] == controller.conversations![index].senderId
+                                ? controller.conversations![index].receiver.profileImage
+                                : controller.conversations![index].sender.profileImage,
+                            lastText: controller.conversations![index].lastMessage,
+                            lastTextTimeSent: controller.conversations![index].lastMessageTimeSent.toString(),
+                            name: Get.find<ApiController>().loggedInUserInfo!['id'] == controller.conversations![index].senderId
+                                ? controller.conversations![index].receiver.username
+                                : controller.conversations![index].sender.username),
                       ),
                     );
                   },
@@ -72,6 +73,7 @@ class _MessagesState extends State<Messages> {
       }),
     );
   }
+  // mainAxisAlignment: controller.messages == null ? MainAxisAlignment.center : MainAxisAlignment.start,
 
   Widget buildContactButton(Size size, {required String imgUrl, required String name, required String lastText, required String lastTextTimeSent}) {
     return Padding(

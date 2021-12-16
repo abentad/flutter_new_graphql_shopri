@@ -88,6 +88,64 @@ class QueryController extends GetxController {
     """;
   }
 
+  String addMessage() {
+    return r"""
+      mutation($convId: ID!, $senderId: ID!, $receiverId: ID!, $messageTxt: String!, $timeSent: String!){
+        addMessage(data: {
+          conversationId: $convId,
+          senderId: $senderId,
+          receiverId: $receiverId,
+          messageText: $messageTxt,
+          timeSent: $timeSent
+        }){
+          id
+          conversationId
+          senderId
+          receiverId
+          messageText
+          timeSent
+          sender{
+            username
+            profile_image
+          }
+          receiver{
+            username
+            profile_image
+          }
+        }
+      }
+    """;
+  }
+
+  String addProduct() {
+    return r"""
+      mutation ($files: [Upload!]!, $name: String!, $price: String!, $description: String!, $height: Int!, $width: Int!, $blurHash: String!, $category: String!, $datePosted: String!) {
+        createProduct(
+          data: {isPending: "false", views: 0, name: $name, price: $price, height: $height, width: $width, blurHash: $blurHash, description: $description, category: $category, datePosted: $datePosted}
+          files: $files
+        ) {
+          id
+          isPending
+          views
+          name
+          price
+          description
+          category
+          image
+          datePosted
+          height
+          width
+          blurHash
+          poster {
+            id
+            deviceToken
+            username
+          }
+        }
+      }
+    """;
+  }
+
   final String loginUserByToken = """
       mutation{
         loginUserByToken{
@@ -139,35 +197,6 @@ class QueryController extends GetxController {
               }
             }
           }
-    """;
-  }
-
-  String addProduct() {
-    return r"""
-      mutation ($files: [Upload!]!, $name: String!, $price: String!, $description: String!, $height: Int!, $width: Int!, $blurHash: String!, $category: String!, $datePosted: String!) {
-        createProduct(
-          data: {isPending: "false", views: 0, name: $name, price: $price, height: $height, width: $width, blurHash: $blurHash, description: $description, category: $category, datePosted: $datePosted}
-          files: $files
-        ) {
-          id
-          isPending
-          views
-          name
-          price
-          description
-          category
-          image
-          datePosted
-          height
-          width
-          blurHash
-          poster {
-            id
-            deviceToken
-            username
-          }
-        }
-      }
     """;
   }
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shopri/src/controllers/api_controller.dart';
 import 'package:shopri/src/controllers/chat_controller.dart';
 import 'package:shopri/src/utils/profile_image_loader.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key, required this.convId}) : super(key: key);
-  final String convId;
+  const ChatScreen({Key? key, required this.conversationIndex}) : super(key: key);
+  final int conversationIndex;
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -16,7 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    Get.find<ChatController>().getMessages(int.parse(widget.convId));
+    Get.find<ChatController>().getMessages(int.parse(Get.find<ChatController>().conversations![widget.conversationIndex].id));
     super.initState();
   }
 
@@ -26,35 +27,55 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: size.height * 0.02),
-            GetBuilder<ChatController>(
-              builder: (controller) => Expanded(
-                child: ListView.builder(
-                  itemCount: controller.messages!['messages'].length,
-                  itemBuilder: (context, index) {
-                    return buildChatBubble(
-                      size: size,
-                      isSender: controller.messages!['messages'][index]['senderId'] == Get.find<ApiController>().loggedInUserInfo!['id'] ? true : false,
-                      messageTxt: controller.messages!['messages'][index]['messageText'],
-                      receiverImgUrl: controller.messages!['messages'][index]['senderId'] == Get.find<ApiController>().loggedInUserInfo!['id']
-                          ? controller.messages!['messages'][index]['receiver']['profile_image']
-                          : controller.messages!['messages'][index]['sender']['profile_image'],
-                    );
-                  },
-                ),
-              ),
-            ),
-            const Spacer(),
-            buildInputAndSendBtn(
-              size,
-              onSend: () {},
-              controller: _messageController,
-            ),
-            SizedBox(height: size.height * 0.01),
-          ],
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.pop(context);
+          Get.find<ChatController>().resetMessages();
+          return false;
+        },
+        child: SafeArea(
+          child: GetBuilder<ChatController>(
+            builder: (controller) {
+              if (controller.messages == null) {
+                return Center(child: Lottie.asset('assets/loading.json', height: size.height * 0.05));
+              }
+              return Column(
+                children: [
+                  SizedBox(height: size.height * 0.02),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: controller.messages!.length,
+                      itemBuilder: (context, index) {
+                        return buildChatBubble(
+                            size: size,
+                            isSender: controller.messages![index].senderId == Get.find<ApiController>().loggedInUserInfo!['id'] ? true : false,
+                            messageTxt: controller.messages![index].messageText,
+                            receiverImgUrl: controller.messages![index].senderId == Get.find<ApiController>().loggedInUserInfo!['id']
+                                ? controller.messages![index].receiver.profileImage
+                                : controller.messages![index].sender.profileImage);
+                      },
+                    ),
+                  ),
+                  const Spacer(),
+                  buildInputAndSendBtn(
+                    size,
+                    onSend: () {
+                      controller.sendMessage(
+                        message: _messageController.text,
+                        convId: Get.find<ChatController>().conversations![widget.conversationIndex].id,
+                        senderId: Get.find<ApiController>().loggedInUserInfo!['id'],
+                        receiverId: Get.find<ApiController>().loggedInUserInfo!['id'] == Get.find<ChatController>().conversations![widget.conversationIndex].senderId
+                            ? Get.find<ChatController>().conversations![widget.conversationIndex].receiverId
+                            : Get.find<ChatController>().conversations![widget.conversationIndex].senderId,
+                      );
+                    },
+                    controller: _messageController,
+                  ),
+                  SizedBox(height: size.height * 0.01),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -115,7 +136,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 Row(
                   children: [
                     Container(
-                      width: size.width * 0.7,
+                      // width: size.width * 0.7,
+                      // width: messageTxt.length.toDouble() * size.width * 0.02,
+                      width: size.width * (0.01 + messageTxt.length.toDouble() / 100),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
@@ -134,7 +157,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 Row(
                   children: [
                     Container(
-                      width: size.width * 0.7,
+                      // width: size.width * 0.7,
+                      width: size.width * (0.01 + messageTxt.length.toDouble() / 100),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),

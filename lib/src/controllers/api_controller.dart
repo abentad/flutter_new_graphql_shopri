@@ -122,10 +122,6 @@ class ApiController extends GetxController {
     var _firstImage = await decodeImageFromList(_firstImageAsUint8List);
     var blurHash = await blurhash.BlurHash.encode(_firstImageAsUint8List, 4, 3);
 
-    // print("FirstImageHeight: ${_firstImage.height}");
-    // print("FirstImageWidth: ${_firstImage.width}");
-    // print("FirstImageBlurHash: $blurHash");
-
     List<http.MultipartFile> _productMultipartImages = [];
     for (var xfile in _productImages) {
       final myFile = await http.MultipartFile.fromPath('productImage', File(xfile!.path).path, contentType: MediaType('image', 'jpeg'));
@@ -148,9 +144,6 @@ class ApiController extends GetxController {
     final QueryResult result = await _client!.mutate(options);
     if (result.hasException) print(result.exception.toString());
     if (result.data != null) {
-      // Navigator.pushReplacement(context, transition.Transition(child: HomeScreen(userInfo: _loggedInUserInfo), transitionEffect: transition.TransitionEffect.FADE));
-      // Navigator.pop(context);
-
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(result.data!['createProduct']['name'] + " has been successfully added.", style: const TextStyle(color: Colors.black)), backgroundColor: Colors.white));
       update();
