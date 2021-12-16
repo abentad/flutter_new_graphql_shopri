@@ -47,6 +47,7 @@ void main() async {
 //TODO: Socket io remove from here later
 late Socket _socket;
 void connectToServer() {
+  print('connecting to socket...');
   try {
     _socket = io(kbaseUrl, <String, dynamic>{
       'transports': ['websocket'],
@@ -56,6 +57,7 @@ void connectToServer() {
     _socket.on('connect', (_) => print('connected to socket with id: ${_socket.id}'));
     _socket.on('receive-message-from-room', (message) => print('Recieved: $message'));
   } catch (e) {
+    print('connecting failed.');
     print(e.toString());
   }
 }
