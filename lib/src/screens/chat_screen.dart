@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shopri/src/controllers/api_controller.dart';
+import 'package:shopri/src/controllers/chat_controller.dart';
 import 'package:shopri/src/utils/profile_image_loader.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
-
+  const ChatScreen({Key? key, required this.convId}) : super(key: key);
+  final String convId;
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -15,6 +16,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    Get.find<ChatController>().getMessages(int.parse(widget.convId));
     super.initState();
   }
 
@@ -28,12 +30,21 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: [
             SizedBox(height: size.height * 0.02),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 2,
-                itemBuilder: (context, index) {
-                  return buildChatBubble(size: size, isSender: true);
-                },
+            GetBuilder<ChatController>(
+              builder: (controller) => Expanded(
+                child: ListView.builder(
+                  itemCount: controller.messages!['messages'].length,
+                  itemBuilder: (context, index) {
+                    return buildChatBubble(
+                      size: size,
+                      isSender: controller.messages!['messages'][index]['senderId'] == Get.find<ApiController>().loggedInUserInfo!['id'] ? true : false,
+                      messageTxt: controller.messages!['messages'][index]['messageText'],
+                      receiverImgUrl: controller.messages!['messages'][index]['senderId'] == Get.find<ApiController>().loggedInUserInfo!['id']
+                          ? controller.messages!['messages'][index]['receiver']['profile_image']
+                          : controller.messages!['messages'][index]['sender']['profile_image'],
+                    );
+                  },
+                ),
               ),
             ),
             const Spacer(),
@@ -79,7 +90,12 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget buildChatBubble({required Size size, required bool isSender}) {
+  Widget buildChatBubble({
+    required Size size,
+    required bool isSender,
+    required String receiverImgUrl,
+    required String messageTxt,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: !isSender
@@ -89,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(50.0),
                   child: Image(
-                    image: NetworkImage(getProfileImageUrl(Get.find<ApiController>().loggedInUserInfo!['profile_image'])),
+                    image: NetworkImage(getProfileImageUrl(receiverImgUrl)),
                     fit: BoxFit.cover,
                     height: size.height * 0.04,
                     width: size.height * 0.04,
@@ -105,7 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(15.0),
                         color: const Color(0xffF5F7FB),
                       ),
-                      child: const Text('Waiting for your reply as i have to back soon. I have to travel a long distance tomorrow.'),
+                      child: Text(messageTxt),
                     ),
                   ],
                 ),
@@ -124,22 +140,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(15.0),
                         color: const Color(0xff4E426D),
                       ),
-                      child: const Text(
-                        'Waiting for your reply as i have to back soon. I have to travel a long distance tomorrow.',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: Text(messageTxt, style: const TextStyle(color: Colors.white)),
                     ),
                   ],
-                ),
-                SizedBox(width: size.width * 0.02),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50.0),
-                  child: Image(
-                    image: NetworkImage(getProfileImageUrl(Get.find<ApiController>().loggedInUserInfo!['profile_image'])),
-                    fit: BoxFit.cover,
-                    height: size.height * 0.04,
-                    width: size.height * 0.04,
-                  ),
                 ),
               ],
             ),

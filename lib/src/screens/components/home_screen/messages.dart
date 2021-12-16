@@ -51,7 +51,8 @@ class _MessagesState extends State<Messages> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context, transition.Transition(child: const ChatScreen(), transitionEffect: transition.TransitionEffect.RIGHT_TO_LEFT));
+                          Navigator.push(context,
+                              transition.Transition(child: ChatScreen(convId: controller.conversations!['conversations'][index]['id']), transitionEffect: transition.TransitionEffect.RIGHT_TO_LEFT));
                         },
                         child: buildContactButton(
                           size,

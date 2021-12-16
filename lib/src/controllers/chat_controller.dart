@@ -9,6 +9,8 @@ class ChatController extends GetxController {
   late Socket _socket;
   Map<String, dynamic>? _conversations;
   Map<String, dynamic>? get conversations => _conversations;
+  Map<String, dynamic>? _messages;
+  Map<String, dynamic>? get messages => _messages;
   Map<String, dynamic>? loggedInUser = Get.find<ApiController>().loggedInUserInfo;
 
   ChatController() {
@@ -56,8 +58,21 @@ class ChatController extends GetxController {
       return false;
     }
     Map<String, dynamic>? _data = result.data;
-    // print(_data);
     _conversations = _data;
+    update();
+    return true;
+  }
+
+  Future<bool> getMessages(int convId) async {
+    final GraphQLClient? _client = Get.find<ApiController>().client;
+    final QueryOptions options = QueryOptions(document: gql(Get.find<QueryController>().getMessages(convId)), variables: <String, dynamic>{});
+    final QueryResult result = await _client!.query(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+      return false;
+    }
+    Map<String, dynamic>? _data = result.data;
+    _messages = _data;
     update();
     return true;
   }
