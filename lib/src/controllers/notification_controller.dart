@@ -31,7 +31,7 @@ class NotificationController extends GetxController {
 
   _getToken() async {
     _token = await FirebaseMessaging.instance.getToken();
-    print("Token " + _token.toString());
+    print("Notification_Device_Token: " + _token.toString());
   }
 
   _setupNotificationListener() {
@@ -66,37 +66,8 @@ class NotificationController extends GetxController {
     } else {
       return false;
     }
-
-    // Dio _dio = Dio(BaseOptions(
-    //   baseUrl: "https://fcm.googleapis.com",
-    //   connectTimeout: 20000,
-    //   receiveTimeout: 100000,
-    //   headers: {"Content-Type": "application/json", "Authorization": "key=$_serverKey"},
-    //   responseType: ResponseType.json,
-    // ));
-    // // try {
-    // final response = await _dio.post(
-    //   '/fcm/send',
-    //   data: {
-    //     "to": deviceToken,
-    //     "notification": {"title": messageTitle, "body": messageBody, "mutable_content": true},
-    //     // "data": {"url": "<url of media image>", "dl": "<deeplink action on tap of notification>"}
-    //   },
-    // );
-    // if (response.statusCode == 200) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
-    // } catch (e) {
-    //   print(e);
-    //   return false;
-    // }
   }
 
-  //
-  //
-  //
   Future<void> createBasicNotificaton({required String title, required String body, String channelKey = 'basic_channel'}) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(

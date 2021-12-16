@@ -5,9 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:shopri/src/constants/api_path.dart';
+import 'package:shopri/src/controllers/chat_controller.dart';
 import 'package:shopri/src/controllers/notification_controller.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 import 'src/controllers/api_controller.dart';
 import 'src/controllers/category_controller.dart';
 import 'src/controllers/my_camera_controller.dart';
@@ -28,12 +27,12 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  Get.put<ChatController>(ChatController());
   Get.put<NotificationController>(NotificationController());
   Get.put<MyCameraController>(MyCameraController());
   Get.put<QueryController>(QueryController());
   Get.put<ApiController>(ApiController());
   Get.put<CategoryController>(CategoryController());
-  connectToServer();
   if (!kIsWeb) {
     AwesomeNotifications().initialize(null, Get.find<NotificationController>().notificationChannels);
     await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: false, sound: true);
@@ -42,24 +41,6 @@ void main() async {
   //! turn it on for publish
   // await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
   runApp(const App());
-}
-
-//TODO: Socket io remove from here later
-late Socket _socket;
-void connectToServer() {
-  print('connecting to socket...');
-  try {
-    _socket = io(kbaseUrl, <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
-    _socket.connect();
-    _socket.on('connect', (_) => print('connected to socket with id: ${_socket.id}'));
-    _socket.on('receive-message-from-room', (message) => print('Recieved: $message'));
-  } catch (e) {
-    print('connecting failed.');
-    print(e.toString());
-  }
 }
 
 class App extends StatelessWidget {
