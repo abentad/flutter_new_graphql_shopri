@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Widget> homeScreenComponents = [
       buildHome(fetchData, scrollController, size, context, widget.userInfo, loadInfo, isLoading),
-      buildSearch(),
+      const BuildSearch(),
       buildNotificaition(),
       const Messages(),
     ];

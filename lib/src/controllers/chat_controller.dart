@@ -9,7 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 class ChatController extends GetxController {
   late Socket _socket;
-  List<Conversation>? _conversations = [];
+  final List<Conversation>? _conversations = [];
   List<Conversation>? get conversations => _conversations;
   List<Message>? _messages = [];
   List<Message>? get messages => _messages;

@@ -34,7 +34,7 @@ class ApiController extends GetxController {
   User? user;
   final List<File?> _productImages = [];
   List<File?> get productImages => _productImages;
-  List<WishList> _wishlists = [];
+  final List<WishList> _wishlists = [];
   List<WishList> get wishlists => _wishlists;
   Map<String, dynamic>? _wishlistMap;
   Map<String, dynamic>? get wishlistMap => _wishlistMap;

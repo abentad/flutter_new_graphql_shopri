@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:shopri/src/controllers/api_controller.dart';
 import '../../utils/product_image_loader.dart';
 import '../../utils/price_format.dart';
