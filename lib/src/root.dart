@@ -25,7 +25,9 @@ class RootState extends State<Root> {
     bool isUserLoggedIn = await Get.find<ApiController>().checkIfUserIsLoggedIn();
     Get.find<ApiController>().setClient();
     if (isUserLoggedIn) {
-      Get.find<ApiController>().signInWithToken(context);
+      bool result = await Get.find<ApiController>().signInWithToken(context);
+      if (result) await Get.find<ApiController>().getWishLists(int.parse(Get.find<ApiController>().loggedInUserInfo!['id']));
+      print("WishLists: ${Get.find<ApiController>().wishlists.length}");
     } else {
       Navigator.pushReplacement(context, transition.Transition(child: const AuthChoice(), transitionEffect: transition.TransitionEffect.FADE));
     }

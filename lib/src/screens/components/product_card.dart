@@ -3,26 +3,30 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:get/get.dart';
 import 'package:get/get_utils/src/extensions/string_extensions.dart';
+import 'package:shopri/src/controllers/api_controller.dart';
 import '../../utils/product_image_loader.dart';
 import '../../utils/price_format.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard(
-      {Key? key,
-      this.hasShadows = false,
-      required this.imageHeight,
-      required this.imageWidth,
-      required this.blurHash,
-      required this.name,
-      required this.image,
-      required this.price,
-      required this.ontap,
-      required this.index,
-      required this.size,
-      this.radiusDouble = 15.0})
-      : super(key: key);
+  const ProductCard({
+    Key? key,
+    this.hasShadows = false,
+    required this.imageHeight,
+    required this.imageWidth,
+    required this.blurHash,
+    required this.name,
+    required this.image,
+    required this.price,
+    required this.ontap,
+    required this.index,
+    required this.size,
+    this.radiusDouble = 15.0,
+    required this.id,
+  }) : super(key: key);
   final String name;
+  final int id;
   final String price;
   final String image;
   final int index;
@@ -81,17 +85,32 @@ class ProductCard extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.only(bottomLeft: Radius.circular(radiusDouble), bottomRight: Radius.circular(radiusDouble)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: size.height * 0.01),
-                  Text(name.toString().capitalize.toString(), style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black)),
-                  SizedBox(height: size.height * 0.01),
-                  Text(
-                    '${formatPrice(price)} birr',
-                    style: const TextStyle(fontSize: 15.0, color: Colors.grey),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: size.height * 0.01),
+                      Text(name.toString().capitalize.toString(), style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black)),
+                      SizedBox(height: size.height * 0.01),
+                      Text(
+                        '${formatPrice(price)} birr',
+                        style: const TextStyle(fontSize: 15.0, color: Colors.grey),
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                    ],
                   ),
-                  SizedBox(height: size.height * 0.02),
+                  IconButton(
+                    onPressed: () {
+                      Get.find<ApiController>().addToWishList(id);
+                    },
+                    icon: Icon(
+                      Icons.favorite,
+                      color: Get.find<ApiController>().checkFavorite(id) ? Colors.pink : Colors.grey.shade400,
+                      // color: Colors.pink,
+                    ),
+                  ),
                 ],
               ),
             ),

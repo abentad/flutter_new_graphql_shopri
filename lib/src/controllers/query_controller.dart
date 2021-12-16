@@ -117,6 +117,81 @@ class QueryController extends GetxController {
     """;
   }
 
+  String addWishList() {
+    return r"""
+        mutation ($productId: ID!, $userId: ID!){
+          addWishList(data: {
+            productId: $productId,
+            userId: $userId
+          }) {
+            id
+            productId
+            userId
+            product {
+              id
+              isPending
+              views
+              name
+              price
+              description
+              category
+              image
+              datePosted
+              posterId
+              images {
+                image_id
+                id
+                url
+              }
+              height
+              width
+              blurHash
+            }
+          }
+        }
+    """;
+  }
+
+  String getWishlists(int userId) {
+    return """
+        {
+          wishlists(userId: $userId){
+            id
+            productId
+            userId
+            product {
+              id
+              isPending
+              views
+              name
+              price
+              description
+              category
+              image
+              datePosted
+              posterId
+              images {
+                image_id
+                id
+                url
+              }
+              poster{
+                id
+                deviceToken
+                username
+                profile_image
+                dateJoined
+                phoneNumber
+              }
+              height
+              width
+              blurHash
+            }    
+          }
+        }
+    """;
+  }
+
   String addProduct() {
     return r"""
       mutation ($files: [Upload!]!, $name: String!, $price: String!, $description: String!, $height: Int!, $width: Int!, $blurHash: String!, $category: String!, $datePosted: String!) {

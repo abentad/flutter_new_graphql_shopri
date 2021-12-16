@@ -100,6 +100,7 @@ Widget buildHome(Function fetchData, ScrollController scrollController, Size siz
                           ontap: () {
                             Navigator.push(context, transition.Transition(child: ProductDetailScreen(product: product), transitionEffect: transition.TransitionEffect.RIGHT_TO_LEFT));
                           },
+                          id: int.parse(product['id']),
                           name: product['name'],
                           price: product['price'],
                           image: product['image'],

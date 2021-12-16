@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:graphql/client.dart';
+import 'package:shopri/src/model/wishlist_model.dart';
 import 'package:transition/transition.dart' as transition;
 import "package:http/http.dart" as http;
 import 'package:http_parser/http_parser.dart';
@@ -33,6 +34,10 @@ class ApiController extends GetxController {
   User? user;
   final List<File?> _productImages = [];
   List<File?> get productImages => _productImages;
+  List<WishList> _wishlists = [];
+  List<WishList> get wishlists => _wishlists;
+  Map<String, dynamic>? _wishlistMap;
+  Map<String, dynamic>? get wishlistMap => _wishlistMap;
 //
 //
 //
@@ -155,6 +160,55 @@ class ApiController extends GetxController {
     }
   }
 
+  //
+  //*wishlist
+
+  Future<bool> addToWishList(int productId) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(Get.find<QueryController>().addWishList()),
+      variables: <String, dynamic>{
+        'productId': productId,
+        'userId': loggedInUserInfo!['id'],
+      },
+    );
+    final QueryResult result = await _client!.mutate(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+      return false;
+    }
+    Map<String, dynamic>? data = result.data;
+    _wishlists.add(WishList.fromJson(data!['addWishList']));
+    update();
+    return true;
+  }
+
+  Future<bool> getWishLists(int userId) async {
+    _wishlists.clear();
+    final QueryOptions options = QueryOptions(document: gql(Get.find<QueryController>().getWishlists(userId)), variables: <String, dynamic>{});
+    final QueryResult result = await _client!.query(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+      return false;
+    }
+    Map<String, dynamic>? _data = result.data;
+    _wishlistMap = _data;
+    for (var wishlist in _data!['wishlists']) {
+      _wishlists.add(WishList.fromJson(wishlist));
+    }
+    update();
+    return true;
+  }
+
+  bool checkFavorite(int id) {
+    bool isFavorite = false;
+    _wishlists.map((e) {
+      if (int.parse(e.id) == id) {
+        isFavorite = true;
+      }
+    });
+    return isFavorite;
+  }
+
   //* for verifying phoneNumber using firebase
   void verifyPhone(String phoneNumber, BuildContext context) async {
     await _auth.verifyPhoneNumber(
@@ -234,14 +288,18 @@ class ApiController extends GetxController {
   }
 
   //* signs in user using auth token found in _token variable
-  void signInWithToken(BuildContext context) async {
+  Future<bool> signInWithToken(BuildContext context) async {
     final QueryOptions options = QueryOptions(document: gql(Get.find<QueryController>().loginUserByToken), variables: <String, dynamic>{});
     final QueryResult result = await _client!.query(options);
-    if (result.hasException) print(result.exception.toString());
+    if (result.hasException) {
+      print(result.exception.toString());
+      return false;
+    }
     setLoggedInUserInfo(result.data!['loginUserByToken']);
     if (_loggedInUserInfo != null) {
       Navigator.pushReplacement(context, transition.Transition(child: HomeScreen(userInfo: _loggedInUserInfo), transitionEffect: transition.TransitionEffect.FADE, curve: Curves.easeIn));
     }
+    return true;
   }
 
   //* fetchs products by using the page passed through it
