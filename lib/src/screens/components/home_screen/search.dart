@@ -76,8 +76,8 @@ class _BuildSearchState extends State<BuildSearch> {
           transition: CircularFloatingSearchBarTransition(),
           physics: const BouncingScrollPhysics(),
           title: Text(
-            selectedTerm ?? 'The Search App',
-            style: Theme.of(context).textTheme.headline6,
+            selectedTerm ?? 'Search',
+            style: TextStyle(fontSize: 18.0, color: Colors.grey.shade700),
           ),
           hint: "Search and find out...",
           actions: [
@@ -100,7 +100,7 @@ class _BuildSearchState extends State<BuildSearch> {
               borderRadius: BorderRadius.circular(8.0),
               child: Material(
                 color: Colors.white,
-                elevation: 4,
+                elevation: 2,
                 child: Builder(
                   builder: (context) {
                     if (filteredSearchHistory!.isEmpty && controller.query.isEmpty) {

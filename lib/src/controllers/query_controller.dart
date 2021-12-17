@@ -192,6 +192,42 @@ class QueryController extends GetxController {
     """;
   }
 
+  String searchProduct() {
+    return r"""
+        mutation ($name: String!){
+          findProductsByName(name: $name){
+            id
+            isPending
+            views
+            name
+            price
+            description
+            category
+            image
+            datePosted
+            posterId
+            poster{
+              id
+              deviceToken
+              username
+              email
+              phoneNumber
+              profile_image
+              dateJoined 
+            }
+            images{
+              image_id
+              id
+              url
+            }
+            height
+            width
+            blurHash
+          }
+        }
+    """;
+  }
+
   String addProduct() {
     return r"""
       mutation ($files: [Upload!]!, $name: String!, $price: String!, $description: String!, $height: Int!, $width: Int!, $blurHash: String!, $category: String!, $datePosted: String!) {

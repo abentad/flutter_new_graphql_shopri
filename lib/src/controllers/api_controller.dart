@@ -36,6 +36,9 @@ class ApiController extends GetxController {
   List<File?> get productImages => _productImages;
   final List<WishList> _wishlists = [];
   List<WishList> get wishlists => _wishlists;
+  final List<Product> _productSearchs = [];
+  List<Product> get productSearchs => _productSearchs;
+
   Map<String, dynamic>? _wishlistMap;
   Map<String, dynamic>? get wishlistMap => _wishlistMap;
 //
@@ -178,6 +181,26 @@ class ApiController extends GetxController {
     }
     Map<String, dynamic>? data = result.data;
     _wishlists.add(WishList.fromJson(data!['addWishList']));
+    update();
+    return true;
+  }
+
+  Future<bool> searchProduct(String productName) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(Get.find<QueryController>().searchProduct()),
+      variables: <String, dynamic>{
+        'name': productName,
+      },
+    );
+    final QueryResult result = await _client!.mutate(options);
+    if (result.hasException) {
+      print(result.exception.toString());
+      return false;
+    }
+    Map<String, dynamic>? data = result.data;
+    for (var product in data!['findProductsByName']) {
+      _productSearchs.add(Product.fromJson(product));
+    }
     update();
     return true;
   }
