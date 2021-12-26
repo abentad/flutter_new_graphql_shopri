@@ -36,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
         child: SafeArea(
           child: GetBuilder<ChatController>(
             builder: (controller) {
-              if (controller.messages == null) {
+              if (controller.messages == []) {
                 return Center(child: Lottie.asset('assets/loading.json', height: size.height * 0.05));
               }
               return Column(
@@ -44,19 +44,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   SizedBox(height: size.height * 0.02),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: controller.messages!.length,
+                      itemCount: controller.messages.length,
                       itemBuilder: (context, index) {
                         return buildChatBubble(
                             size: size,
-                            isSender: controller.messages![index].senderId == Get.find<ApiController>().loggedInUserInfo!['id'] ? true : false,
-                            messageTxt: controller.messages![index].messageText,
-                            receiverImgUrl: controller.messages![index].senderId == Get.find<ApiController>().loggedInUserInfo!['id']
-                                ? controller.messages![index].receiver.profileImage
-                                : controller.messages![index].sender.profileImage);
+                            isSender: controller.messages[index].senderId == Get.find<ApiController>().loggedInUserInfo!['id'] ? true : false,
+                            messageTxt: controller.messages[index].messageText,
+                            receiverImgUrl: controller.messages[index].senderId == Get.find<ApiController>().loggedInUserInfo!['id']
+                                ? controller.messages[index].receiver.profileImage
+                                : controller.messages[index].sender.profileImage);
                       },
                     ),
                   ),
-                  const Spacer(),
+                  // const Spacer(),
                   buildInputAndSendBtn(
                     size,
                     onSend: () {
@@ -136,9 +136,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 Row(
                   children: [
                     Container(
-                      // width: size.width * 0.7,
+                      width: size.width * 0.7,
                       // width: messageTxt.length.toDouble() * size.width * 0.02,
-                      width: size.width * (0.01 + messageTxt.length.toDouble() / 100),
+                      // width: size.width * (0.01 + messageTxt.length.toDouble() / 100),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
@@ -157,8 +157,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 Row(
                   children: [
                     Container(
-                      // width: size.width * 0.7,
-                      width: size.width * (0.01 + messageTxt.length.toDouble() / 100),
+                      width: size.width * 0.7,
+                      // width: size.width * (0.01 + messageTxt.length.toDouble() / 100),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),

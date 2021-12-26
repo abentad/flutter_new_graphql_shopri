@@ -16,8 +16,8 @@ import 'src/root.dart';
 //
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  //!fix sending two notifications when app is in background or terminated
-  //!createBasicNotificaton(title: message.notification!.title.toString(), body: message.notification!.body.toString());
+  //fix sending two notifications when app is in background or terminated
+  //createBasicNotificaton(title: message.notification!.title.toString(), body: message.notification!.body.toString());
   print("Handling a background message: ${message.messageId}");
 }
 

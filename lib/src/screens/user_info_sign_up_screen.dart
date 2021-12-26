@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopri/src/controllers/api_controller.dart';
+import 'package:shopri/src/controllers/notification_controller.dart';
 
 import 'components/auth_widgets.dart';
 import 'components/custom_material_button.dart';
@@ -129,7 +130,7 @@ class _UserInfoSignUpScreenState extends State<UserInfoSignUpScreen> {
                       //* execute the sign up
                       Get.find<ApiController>().signUpUser(
                         File(profileImage!.path),
-                        "",
+                        Get.find<NotificationController>().deviceToken.toString(),
                         _usernameController.text,
                         _emailController.text,
                         widget.phoneNumber,

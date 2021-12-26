@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       child: Scaffold(
-        drawer: const HomeScreenDrawer(),
+        // drawer: const HomeScreenDrawer(),
         body: homeScreenComponents[currentIndex],
         bottomNavigationBar: ScrollToHideWidget(
           controller: scrollController,
@@ -162,7 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        floatingActionButton: currentIndex == 0 ? ScrollToScaleWidget(controller: scrollController, duration: const Duration(milliseconds: 300), child: const BuildFloatingActoinButton()) : null,
+        floatingActionButton: currentIndex == 0
+            ? ScrollToScaleWidget(controller: scrollController, duration: const Duration(milliseconds: 300), child: const BuildFloatingActoinButton())
+            : null,
       ),
     );
   }

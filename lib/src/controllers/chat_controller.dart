@@ -11,8 +11,8 @@ class ChatController extends GetxController {
   late Socket _socket;
   final List<Conversation>? _conversations = [];
   List<Conversation>? get conversations => _conversations;
-  List<Message>? _messages = [];
-  List<Message>? get messages => _messages;
+  List<Message> _messages = [];
+  List<Message> get messages => _messages;
   Map<String, dynamic>? loggedInUser = Get.find<ApiController>().loggedInUserInfo;
 
   ChatController() {
@@ -52,7 +52,7 @@ class ChatController extends GetxController {
   }
 
   void resetMessages() {
-    _messages = null;
+    _messages = [];
     update();
   }
 
@@ -74,7 +74,7 @@ class ChatController extends GetxController {
   }
 
   Future<bool> getMessages(int convId) async {
-    _messages = null;
+    _messages = [];
     final GraphQLClient? _client = Get.find<ApiController>().client;
     final QueryOptions options = QueryOptions(document: gql(Get.find<QueryController>().getMessages(convId)), variables: <String, dynamic>{});
     final QueryResult result = await _client!.query(options);
@@ -83,9 +83,12 @@ class ChatController extends GetxController {
       return false;
     }
     Map<String, dynamic>? _data = result.data;
-    for (var message in _data!['messages']) {
-      _messages!.add(Message.fromJson(message));
+    for (var i = 0; i < _data!['messages'].length; i++) {
+      _messages.add(Message.fromJson(_data['messages'][i]));
     }
+    // for (var message in _data!['messages']) {
+    //   _messages!.add(Message.fromJson(message));
+    // }
     update();
     return true;
   }

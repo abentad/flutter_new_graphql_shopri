@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationController extends GetxController {
-  String? _token;
-  String? get token => _token;
+  String? _deviceToken;
+  String? get deviceToken => _deviceToken;
   final List<NotificationChannel> _notificationChannels = [
     NotificationChannel(
       channelKey: 'basic_channel',
@@ -30,8 +30,8 @@ class NotificationController extends GetxController {
   }
 
   _getToken() async {
-    _token = await FirebaseMessaging.instance.getToken();
-    print("Notification_Device_Token: " + _token.toString());
+    _deviceToken = await FirebaseMessaging.instance.getToken();
+    print("Notification_Device_Token: " + _deviceToken.toString());
   }
 
   _setupNotificationListener() {
